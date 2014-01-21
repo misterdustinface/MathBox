@@ -1,0 +1,13 @@
+not identical; 		8802
+identical; 			8801
+?=; 				8799
+<->; 				8596
+->, implies; 		8594
+not, -; 			0172
+for all; 			8704
+xor; 				8853
+or, V; 				8744
+and, ^; 			8743
+union, U; 			8746
+intersection; 		8745
+exists; 			8707
