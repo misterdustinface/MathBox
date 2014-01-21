@@ -15,6 +15,7 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 
+import javax.swing.JApplet;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
@@ -26,7 +27,7 @@ import javax.swing.filechooser.FileNameExtensionFilter;
  * This is a notepad program.  It reads .txt files.
  * @author Dustin
  */
-public class Notepad {
+public class Notepad extends JApplet implements Runnable{
 
     /////////////////////
     //    CONSTANTS    //
@@ -82,18 +83,55 @@ public class Notepad {
     
     
     public static void main(String[] args) {
-
-        // Setup the display
+    	initFrame();
         initDisplay();
-        
-        // Setup what the buttons do
+        finishFrame();
         initActionListeners();
         
     }
     
+    public void init() {       
+    	
+    	setName(PROGRAM_TITLE + DEFAULT_FILE_NAME);
+    	setVisible(true);
+    	setSize(DEFAULT_WIDTH, DEFAULT_HEIGHT);
+    	
+    	initDisplay();
+    	initActionListeners();
+    	
+    	addKeyListener(keyboardSpecialCommands);
+    	add(sp, BorderLayout.CENTER);
+    	validate();
+    	repaint();
+    }
+    
+    public void run(){}
+    
     ///////////////////////////////////////////////////////////////////////////
     ///////////////////////////////////////////////////////////////////////////
     ///////////////////////////////////////////////////////////////////////////
+    
+    private static void initFrame()
+    {    	
+        // CREATING FRAME WITH ALL OF IT'S GOODIES [DISPLAY]
+        frame = new JFrame(PROGRAM_TITLE + DEFAULT_FILE_NAME);
+        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        frame.setVisible(true);
+        frame.setSize(DEFAULT_WIDTH, DEFAULT_HEIGHT);
+        frame.setLocation((int)(Math.random() * 800), (int)(Math.random() * 400));
+    }
+    
+    private static void finishFrame()
+    {
+        // ADD THE MenuBar to the display
+        frame.setMenuBar(menuBar);
+        // ADD THE Notepad to the display
+        frame.add(sp, BorderLayout.CENTER);
+        
+        // REFRESH
+        frame.validate();
+        frame.repaint();
+    }
     
     private static void initDisplay()
     {
@@ -101,13 +139,6 @@ public class Notepad {
         fontSize  	= 14;
         font 		= new Font(Font.MONOSPACED, fontStyle, fontSize);
     	
-        // CREATING FRAME WITH ALL OF IT'S GOODIES [DISPLAY]
-        frame = new JFrame(PROGRAM_TITLE + DEFAULT_FILE_NAME);
-        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        frame.setVisible(true);
-        frame.setSize(DEFAULT_WIDTH, DEFAULT_HEIGHT);
-        frame.setLocation((int)(Math.random() * 800), (int)(Math.random() * 400));
-        
         // INITIALIZING OTHER DISPLAY STUFF
         jfc    = new JFileChooser();
         
@@ -144,9 +175,6 @@ public class Notepad {
         // ADDING THE FILE SECTION TO THE MENU BAR
         menuBar.add(fileMenu);
         
-        // ADD THE MenuBar to the display
-        frame.setMenuBar(menuBar);
-        
         ////////////////////////////////////////////////////////////////////////
         
         // INITIALIZING THE TEXT AREA (area we type in)
@@ -154,7 +182,8 @@ public class Notepad {
         textArea.setFont(font);
         
         
-        converterModel = new KeywordConvertingModel(new File("src/mathwords.txt"));
+        //converterModel = new KeywordConvertingModel(new File("src/mathwords.txt"));
+        converterModel = new KeywordConvertingModel(new File("mathwords.txt")); // when running jar look for local file called
         
         textArea.setText(converterModel.toString()); // mostly for testing
         
@@ -162,12 +191,6 @@ public class Notepad {
         // - It's a Notepad now!
         sp = new JScrollPane(textArea);
         
-        // ADD THE Notepad to the display
-        frame.add(sp, BorderLayout.CENTER);
-        
-        // REFRESH
-        frame.validate();
-        frame.repaint();
     }
     
     ///////////////////////////////////////////////////////////////////////////
@@ -185,7 +208,10 @@ public class Notepad {
         miExit.addActionListener(exitAction);
         
         // Add "special keyboard commands"
-        frame.addKeyListener(keyboardSpecialCommands);
+        if(frame != null){
+        	frame.addKeyListener(keyboardSpecialCommands);
+        }
+
         textArea.addKeyListener(keyboardSpecialCommands);
     }   
     
