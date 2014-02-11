@@ -38,15 +38,15 @@ public class Notepad {
     final public static int DEFAULT_WIDTH  = 400;
     final public static int DEFAULT_HEIGHT = 600;
     
-    public final static String txtDoc = "Text Document";
-    public final static String txt    = "txt";
+    final public static String txtDoc = "Text Document";
+    final public static String txt    = "txt";
     
     /////////////////////
     //    VARIABLES    //
     /////////////////////
     
     // FONT STUFF ///////////////////////
-    public  static Font       font;
+    private  static Font       font;
     private static int        fontStyle;
     private static int        fontSize;
     /////////////////////////////////////
@@ -62,6 +62,7 @@ public class Notepad {
     private static MenuItem  miSaveAs;   // save as option
     private static MenuItem  miSave;   // save option
     private static MenuItem  miOpen;   // open option
+    private static MenuItem  miSelectKeywordSet; 
     private static MenuItem  miConvert;// convert option
     private static MenuItem  miExit;   // exit option
     //////////////////////////////////
@@ -150,6 +151,7 @@ public class Notepad {
         miSave = new MenuItem(   "Save (Ctrl + S)");
         miOpen = new MenuItem(   "Open (Ctrl + O)");
         miConvert = new MenuItem("Convert (F1)");
+        miSelectKeywordSet = new MenuItem("Select Keyword Set");
         miExit = new MenuItem(   "Exit (Esc)");
         
         // ADDING THE OPTIONS TO THE FILE SECTION
@@ -157,6 +159,7 @@ public class Notepad {
         fileMenu.add(miSave);
         fileMenu.add(miOpen);
         fileMenu.add(miConvert);
+        fileMenu.add(miSelectKeywordSet);
         fileMenu.add(miExit);
         
         // ADDING THE FILE SECTION TO THE MENU BAR
@@ -170,8 +173,7 @@ public class Notepad {
         //textArea.
         
         //converterModel = new KeywordConvertingModel(new File("src/mathwords.txt"));
-        converterModel = new KeywordConvertingModel(new File("src/mathwords.txt")); // when running jar look for local file called
-        
+
         //textArea.setText(converterModel.toString()); // mostly for testing
         
         // INITIALIZING THE SCROLLING STUFF (having it hold the text area) 
@@ -196,6 +198,8 @@ public class Notepad {
         
         miConvert.addActionListener(convertAction);
       
+        miSelectKeywordSet.addActionListener(selectKeywordSetAction);
+        
         miExit.addActionListener(exitAction);
         
         // Add "special keyboard commands"
@@ -204,7 +208,24 @@ public class Notepad {
         }
 
         textArea.addKeyListener(keyboardSpecialCommands);
-    }   
+    }
+    
+    ///////////////////////////////////////////////////////////////////////////////////////////////////// 
+    
+    private static void selectKeywordSetOp(){
+        // Open up the file selection screen, if "Open" is pressed
+        if(jfc.showOpenDialog(frame) == JFileChooser.APPROVE_OPTION){
+            currentFile = jfc.getSelectedFile();
+            converterModel = new KeywordConvertingModel(currentFile);
+        }
+    }
+    
+    private static ActionListener selectKeywordSetAction = new ActionListener(){
+    	 @Override
+         public void actionPerformed(ActionEvent e) {
+    		 selectKeywordSetOp();
+    	 }
+    };
     
     /////////////////////////////////////////////////////////////////////////////////////////////////////
     
