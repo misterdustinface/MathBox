@@ -52,4 +52,5 @@ and, ^, &&, &; 				8743
 union, U; 				8746
 intersection; 		8745				
 there exists, exists, E; 		8707
+pi;							0960
 name;					Dustin Shaffer

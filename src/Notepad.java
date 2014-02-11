@@ -15,19 +15,18 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 
-import javax.swing.JApplet;
 import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import javax.swing.JScrollPane;
-import javax.swing.JTextArea;
+import javax.swing.JTextPane;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
 /**
  * This is a notepad program.  It reads .txt files.
  * @author Dustin
  */
-public class Notepad extends JApplet implements Runnable{
+public class Notepad {
 
     /////////////////////
     //    CONSTANTS    //
@@ -60,8 +59,10 @@ public class Notepad extends JApplet implements Runnable{
     // THE TOP MENU BAR //////////////
     private static MenuBar   menuBar;  // The menu bar itself
     private static Menu      fileMenu; // The "File" section
+    private static MenuItem  miSaveAs;   // save as option
     private static MenuItem  miSave;   // save option
     private static MenuItem  miOpen;   // open option
+    private static MenuItem  miConvert;// convert option
     private static MenuItem  miExit;   // exit option
     //////////////////////////////////
     
@@ -71,7 +72,7 @@ public class Notepad extends JApplet implements Runnable{
     //////////////////////////////////
     
     // Notepad stuff //////////////////
-    private static JTextArea   textArea;    // FOR WRITING
+    private static JTextPane   textArea;    // FOR WRITING
     private static JScrollPane sp;          // Scrolling for notepad
     ///////////////////////////////////
     
@@ -87,25 +88,7 @@ public class Notepad extends JApplet implements Runnable{
         initDisplay();
         finishFrame();
         initActionListeners();
-        
     }
-    
-    public void init() {       
-    	
-    	setName(PROGRAM_TITLE + DEFAULT_FILE_NAME);
-    	setVisible(true);
-    	setSize(DEFAULT_WIDTH, DEFAULT_HEIGHT);
-    	
-    	initDisplay();
-    	initActionListeners();
-    	
-    	addKeyListener(keyboardSpecialCommands);
-    	add(sp, BorderLayout.CENTER);
-    	validate();
-    	repaint();
-    }
-    
-    public void run(){}
     
     ///////////////////////////////////////////////////////////////////////////
     ///////////////////////////////////////////////////////////////////////////
@@ -163,13 +146,17 @@ public class Notepad extends JApplet implements Runnable{
         fileMenu.setLabel("File"); // setting the name
         
         // INITIALIZING THE OPTIONS IN THE FILE SECTION
-        miSave = new MenuItem("Save As");
-        miOpen = new MenuItem("Open");
-        miExit = new MenuItem("Exit");
+        miSaveAs = new MenuItem( "Save As");
+        miSave = new MenuItem(   "Save (Ctrl + S)");
+        miOpen = new MenuItem(   "Open (Ctrl + O)");
+        miConvert = new MenuItem("Convert (F1)");
+        miExit = new MenuItem(   "Exit (Esc)");
         
         // ADDING THE OPTIONS TO THE FILE SECTION
+        fileMenu.add(miSaveAs);
         fileMenu.add(miSave);
         fileMenu.add(miOpen);
+        fileMenu.add(miConvert);
         fileMenu.add(miExit);
         
         // ADDING THE FILE SECTION TO THE MENU BAR
@@ -178,14 +165,14 @@ public class Notepad extends JApplet implements Runnable{
         ////////////////////////////////////////////////////////////////////////
         
         // INITIALIZING THE TEXT AREA (area we type in)
-        textArea = new JTextArea();
+        textArea = new JTextPane();
         textArea.setFont(font);
-        
+        //textArea.
         
         //converterModel = new KeywordConvertingModel(new File("src/mathwords.txt"));
-        converterModel = new KeywordConvertingModel(new File("mathwords.txt")); // when running jar look for local file called
+        converterModel = new KeywordConvertingModel(new File("src/mathwords.txt")); // when running jar look for local file called
         
-        textArea.setText(converterModel.toString()); // mostly for testing
+        //textArea.setText(converterModel.toString()); // mostly for testing
         
         // INITIALIZING THE SCROLLING STUFF (having it hold the text area) 
         // - It's a Notepad now!
@@ -200,10 +187,14 @@ public class Notepad extends JApplet implements Runnable{
     private static void initActionListeners()
     {
         // Add a reaction to the SAVE button
+        miSaveAs.addActionListener(saveAsAction);
+        
         miSave.addActionListener(saveAction);
         
         // Add an action to the OPEN button
         miOpen.addActionListener(openAction);
+        
+        miConvert.addActionListener(convertAction);
       
         miExit.addActionListener(exitAction);
         
@@ -214,6 +205,21 @@ public class Notepad extends JApplet implements Runnable{
 
         textArea.addKeyListener(keyboardSpecialCommands);
     }   
+    
+    /////////////////////////////////////////////////////////////////////////////////////////////////////
+    
+    public static void convertOp(){
+    	textArea.setText(converterModel.convert(textArea.getText()));
+    }
+    
+    public static ActionListener convertAction = new ActionListener(){
+
+		@Override
+		public void actionPerformed(ActionEvent arg0) {
+			convertOp();
+		}
+    	
+    };
     
     ///////////////////////////////////////////////////////////////////////////////////////////////////// 
     
@@ -238,6 +244,13 @@ public class Notepad extends JApplet implements Runnable{
     }
     
     public static ActionListener saveAction = new ActionListener(){
+    	@Override
+        public void actionPerformed(ActionEvent e) {
+    		saveOp(currentFile);
+        }
+    };
+    
+    public static ActionListener saveAsAction = new ActionListener(){
     	@Override
         public void actionPerformed(ActionEvent e) {
 
@@ -333,8 +346,8 @@ public class Notepad extends JApplet implements Runnable{
             else if(keyCode == KeyEvent.VK_ESCAPE){
             	exitOp();
             }
-            else if(keyCode == KeyEvent.VK_ENTER){
-            	textArea.setText(converterModel.convert(textArea.getText()));
+            else if(keyCode == KeyEvent.VK_F1){
+            	convertOp();
             }    
 
         }
