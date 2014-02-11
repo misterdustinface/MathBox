@@ -215,8 +215,7 @@ public class Notepad {
     private static void selectKeywordSetOp(){
         // Open up the file selection screen, if "Open" is pressed
         if(jfc.showOpenDialog(frame) == JFileChooser.APPROVE_OPTION){
-            currentFile = jfc.getSelectedFile();
-            converterModel = new KeywordConvertingModel(currentFile);
+            converterModel = new KeywordConvertingModel(jfc.getSelectedFile());
         }
     }
     
