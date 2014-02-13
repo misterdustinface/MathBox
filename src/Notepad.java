@@ -8,6 +8,9 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
+import java.awt.print.PageFormat;
+import java.awt.print.PrinterException;
+import java.awt.print.PrinterJob;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -64,6 +67,7 @@ public class Notepad {
     private static MenuItem  miOpen;   // open option
     private static MenuItem  miSelectKeywordSet; 
     private static MenuItem  miConvert;// convert option
+    private static MenuItem  miPrint;
     private static MenuItem  miExit;   // exit option
     //////////////////////////////////
     
@@ -148,18 +152,22 @@ public class Notepad {
         
         // INITIALIZING THE OPTIONS IN THE FILE SECTION
         miSaveAs = new MenuItem( "Save As");
-        miSave = new MenuItem(   "Save (Ctrl + S)");
-        miOpen = new MenuItem(   "Open (Ctrl + O)");
+        miSave = new MenuItem(   "Save  (Ctrl + S)");
+        miOpen = new MenuItem(   "Open  (Ctrl + O)");
         miConvert = new MenuItem("Convert (F1)");
         miSelectKeywordSet = new MenuItem("Select Keyword Set");
-        miExit = new MenuItem(   "Exit (Esc)");
+        miPrint = new MenuItem(  "Print (Ctrl + P)");
+        miExit = new MenuItem(   "Exit  (Esc)");
         
         // ADDING THE OPTIONS TO THE FILE SECTION
         fileMenu.add(miSaveAs);
         fileMenu.add(miSave);
         fileMenu.add(miOpen);
+        fileMenu.add(miPrint);
+        fileMenu.addSeparator();
         fileMenu.add(miConvert);
         fileMenu.add(miSelectKeywordSet);
+        fileMenu.addSeparator();
         fileMenu.add(miExit);
         
         // ADDING THE FILE SECTION TO THE MENU BAR
@@ -199,6 +207,8 @@ public class Notepad {
         miConvert.addActionListener(convertAction);
       
         miSelectKeywordSet.addActionListener(selectKeywordSetAction);
+        
+        miPrint.addActionListener(printAction);
         
         miExit.addActionListener(exitAction);
         
@@ -362,6 +372,9 @@ public class Notepad {
             	else if(keyCode == KeyEvent.VK_O){
             		openOp();
             	}
+            	else if(keyCode == KeyEvent.VK_P){
+            		printOp();
+            	}
             }
             else if(keyCode == KeyEvent.VK_ESCAPE){
             	exitOp();
@@ -378,7 +391,33 @@ public class Notepad {
         }
     	
     };
+    /////////////////////////////////////////////////////////////////////////////////////////////////////
+    private static ActionListener printAction = new ActionListener(){
+		@Override
+		public void actionPerformed(ActionEvent arg0) {
+			printOp();
+		}
+    };
     
+    private static void printOp(){
+    	try {
+			textArea.print();
+		} catch (PrinterException e) {
+			//e.printStackTrace();
+		}
+    	
+//    	PrinterJob job 		= PrinterJob.getPrinterJob();
+//    	PageFormat format 	= job.pageDialog(job.defaultPage());
+//    	job.setPrintable(textArea.);
+//    	if(job.printDialog()){
+//    		try {
+//    			job.setJobName(currentFile.getName());
+//				job.print();
+//			} catch (PrinterException e) {
+//				e.printStackTrace();
+//			}
+//    	}
+    }
     
     /////////////////////////////////////////////////////////////////////////////////////////////////////
     
