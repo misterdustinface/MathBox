@@ -3,7 +3,6 @@ import java.awt.MenuItem;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
-import java.awt.event.KeyListener;
 
 import javax.swing.JFileChooser;
 
@@ -34,21 +33,21 @@ public class MathBox extends Notepad{
     ///////////////////////////////////
     
     public MathBox(){
-    	main(null);
-    }
-    
-    public static void main(String[] args) {
-    	Notepad.main(args);
-    	Notepad.setTitle(PROGRAM_TITLE);
+    	super();
+    	super.setTitle(PROGRAM_TITLE);
     	initDisplay();
     	initActionListeners();
     }
     
+    public static void main(String[] args) {
+    	new MathBox();
+    }
+    
     ///////////////////////////////////////////////////////////////////////////
     ///////////////////////////////////////////////////////////////////////////
     ///////////////////////////////////////////////////////////////////////////
     
-    private static void initDisplay()
+    private void initDisplay()
     {
         miConvert = new MenuItem("Convert (F1)");
         miSelectKeywordSet = new MenuItem("Select Keyword Set");
@@ -62,27 +61,22 @@ public class MathBox extends Notepad{
     ///////////////////////////////////////////////////////////////////////////
     ///////////////////////////////////////////////////////////////////////////    
    
-    private static void initActionListeners()
+    private void initActionListeners()
     {
         miConvert.addActionListener(convertAction);
         miSelectKeywordSet.addActionListener(selectKeywordSetAction);
-        
-        if(frame != null){
-        	frame.addKeyListener(keyboardSpecialCommands);
-        }
-        textArea.addKeyListener(keyboardSpecialCommands);
     }
     
     ///////////////////////////////////////////////////////////////////////////////////////////////////// 
     
-    private static void selectKeywordSetOp(){
+    private void selectKeywordSetOp(){
         // Open up the file selection screen, if "Open" is pressed
         if(jfc.showOpenDialog(frame) == JFileChooser.APPROVE_OPTION){
             converterModel = new KeywordConvertingModel(jfc.getSelectedFile());
         }
     }
     
-    private static ActionListener selectKeywordSetAction = new ActionListener(){
+    private ActionListener selectKeywordSetAction = new ActionListener(){
     	 @Override
          public void actionPerformed(ActionEvent e) {
     		 selectKeywordSetOp();
@@ -91,11 +85,11 @@ public class MathBox extends Notepad{
     
     /////////////////////////////////////////////////////////////////////////////////////////////////////
     
-    private static void convertOp(){
+    private void convertOp(){
     	textArea.setText(converterModel.convert(textArea.getText()));
     }
     
-    private static ActionListener convertAction = new ActionListener(){
+    private ActionListener convertAction = new ActionListener(){
 
 		@Override
 		public void actionPerformed(ActionEvent arg0) {
@@ -106,27 +100,13 @@ public class MathBox extends Notepad{
     
     ///////////////////////////////////////////////////////////////////////////////////////////////////// 
     
-    protected static KeyListener keyboardSpecialCommands = new KeyListener(){
-
-        @Override
-        public void keyTyped(KeyEvent e) {
-
-        }
-
-        @Override
-        public void keyPressed(KeyEvent e) {
-            if(e.getKeyCode() == KeyEvent.VK_F1){
-            	convertOp();
-            }    
-        	Notepad.keyboardSpecialCommands.keyPressed(e);;
-
-        }
-
-        @Override
-        public void keyReleased(KeyEvent e) {
-            
-        }
+    protected void keyPressedOp(KeyEvent e){
     	
-    };
+    	super.keyPressedOp(e);
+        int keyCode = e.getKeyCode();
+        if(keyCode == KeyEvent.VK_F1){
+        	convertOp();
+        }
+    }
    
 }
