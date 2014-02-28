@@ -1,4 +1,5 @@
 
+import java.awt.Menu;
 import java.awt.MenuItem;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -23,7 +24,7 @@ public class MathBox extends Notepad{
     /////////////////////
     //    VARIABLES    //
     /////////////////////
-
+    private static Menu 	 options;
     private static MenuItem  miSelectKeywordSet; 
     private static MenuItem  miConvert;// convert option
     //////////////////////////////////
@@ -49,12 +50,15 @@ public class MathBox extends Notepad{
     
     private void initDisplay()
     {
+    	options = new Menu("Options");
+    	
+    	miSelectKeywordSet = new MenuItem("Select Keyword Set");
         miConvert = new MenuItem("Convert (F1)");
-        miSelectKeywordSet = new MenuItem("Select Keyword Set");
+
+        options.add(miSelectKeywordSet);
+        options.add(miConvert);
         
-        fileMenu.addSeparator();
-        fileMenu.add(miConvert);
-        fileMenu.add(miSelectKeywordSet);
+        super.addMenuToMenuBar(options);
     }
     
     ///////////////////////////////////////////////////////////////////////////
