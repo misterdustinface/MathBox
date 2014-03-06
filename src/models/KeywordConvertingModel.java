@@ -1,3 +1,4 @@
+package models;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
@@ -102,6 +103,7 @@ public class KeywordConvertingModel {
 		return temp;
 	}
 	
+	// An operation
 	public String convert(String text)
 	{
 		for(KeywordMappingPair pair : set){

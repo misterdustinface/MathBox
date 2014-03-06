@@ -1,12 +1,11 @@
 
 import java.awt.Menu;
 import java.awt.MenuItem;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 
-import javax.swing.JFileChooser;
-
+import models.KeywordConvertingModel;
+import operations.ConvertDocumentOp;
+import operations.SelectKeywordSetOp;
 import writingTools.Notepad;
 
 /**
@@ -24,24 +23,33 @@ public class MathBox extends Notepad{
     /////////////////////
     //    VARIABLES    //
     /////////////////////
-    private static Menu 	 options;
-    private static MenuItem  miSelectKeywordSet; 
-    private static MenuItem  miConvert;// convert option
+    private Menu 	 options;
+    private MenuItem miSelectKeywordSet; 
+    private MenuItem miConvert;// convert option
     //////////////////////////////////
 
+    // Operations ////////////////////
+    private ConvertDocumentOp 	convertDoc;
+    private SelectKeywordSetOp	selectKeywordSet;
+    //////////////////////////////////
+    
     // MathBox stuff //////////////////
-    private static KeywordConvertingModel converterModel;
+    private KeywordConvertingModel converterModel;
     ///////////////////////////////////
     
     public MathBox(){
     	super();
-    	super.setTitle(PROGRAM_TITLE);
     	initDisplay();
     	initActionListeners();
+    	resetTitle();
     }
     
     public static void main(String[] args) {
     	new MathBox();
+    }
+    
+    protected void resetTitle(){
+    	frame.setTitle(PROGRAM_TITLE + getCurrentFileName());
     }
     
     ///////////////////////////////////////////////////////////////////////////
@@ -52,8 +60,8 @@ public class MathBox extends Notepad{
     {
     	options = new Menu("Options");
     	
-    	miSelectKeywordSet = new MenuItem("Select Keyword Set");
-        miConvert = new MenuItem("Convert (F1)");
+    	miSelectKeywordSet 	= new MenuItem("Select Keyword Set");
+        miConvert 			= new MenuItem("Convert (F1)");
 
         options.add(miSelectKeywordSet);
         options.add(miConvert);
@@ -67,46 +75,12 @@ public class MathBox extends Notepad{
    
     private void initActionListeners()
     {
-        miConvert.addActionListener(convertAction);
-        miSelectKeywordSet.addActionListener(selectKeywordSetAction);
-    }
-    
-    ///////////////////////////////////////////////////////////////////////////////////////////////////// 
-    
-    private void selectKeywordSetOp(){
-        // Open up the file selection screen, if "Open" is pressed
-        if(jfc.showOpenDialog(frame) == JFileChooser.APPROVE_OPTION){
-            converterModel = new KeywordConvertingModel(jfc.getSelectedFile());
-        }
-    }
-    
-    private ActionListener selectKeywordSetAction = new ActionListener(){
-    	 @Override
-         public void actionPerformed(ActionEvent e) {
-    		 selectKeywordSetOp();
-    	 }
-    };
-    
-    /////////////////////////////////////////////////////////////////////////////////////////////////////
-    
-    private void convertOp(){
-    	textArea.setText(converterModel.convert(textArea.getText()));
-    }
-    
-    private ActionListener convertAction = new ActionListener(){
+    	convertDoc = new ConvertDocumentOp(textArea, converterModel);
+        miConvert.addActionListener(convertDoc.getActionListener());
 
-		@Override
-		public void actionPerformed(ActionEvent arg0) {
-			convertOp();
-		}
-    	
-    };
-    
-    ///////////////////////////////////////////////////////////////////////////////////////////////////// 
-    
-	protected void newWindowOp(){
-		new MathBox();
-	}
+        selectKeywordSet = new SelectKeywordSetOp(frame, convertDoc);
+        miSelectKeywordSet.addActionListener(selectKeywordSet.getActionListener());
+    }
     
     ///////////////////////////////////////////////////////////////////////////////////////////////////// 
     
@@ -115,7 +89,7 @@ public class MathBox extends Notepad{
     	super.keyPressedOp(e);
         int keyCode = e.getKeyCode();
         if(keyCode == KeyEvent.VK_F1){
-        	convertOp();
+        	convertDoc.executeOp();
         }
     }
    
